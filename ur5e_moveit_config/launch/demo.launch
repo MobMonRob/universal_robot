@@ -1,7 +1,7 @@
 <launch>
 
   <!-- specify the planning pipeline -->
-  <arg name="pipeline" default="ompl" />
+  <arg name="pipeline" default="chomp" />
 
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
@@ -24,6 +24,11 @@
   -->
   <arg name="use_gui" default="false" />
   <arg name="use_rviz" default="true" />
+
+  <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+  <include file="$(dirname)/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
 
   <!-- If needed, broadcast static tf for robot root -->
 
@@ -59,5 +64,10 @@
   <include file="$(find ur5e_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
+
+
+
+  <!-- Remap follow_joint_trajectory -->
+  <remap if="$(arg sim)" from="/scaled_pos_joint_traj_controller/follow_joint_trajectory" to="/pos_joint_traj_controller/follow_joint_trajectory"/>
 
 </launch>
